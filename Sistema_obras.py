@@ -9,11 +9,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
+# garante que as pastas existam para salvar CSVs e relatórios
+os.makedirs("dados", exist_ok=True)
+os.makedirs("relatorios", exist_ok=True)
+
 # -------------------------
 # Arquivos CSV
 # -------------------------
-ARQ_OBRAS = "obras.csv"
-ARQ_ETAPAS = "etapas.csv"
+ARQ_OBRAS = "dados/obras.csv"
+ARQ_ETAPAS = "dados/etapas.csv"
 
 # -------------------------
 # Memória
@@ -41,18 +45,23 @@ def carregar_csv():
 
     if os.path.exists(ARQ_OBRAS):
         df = pd.read_csv(ARQ_OBRAS)
-        obras = {row["codigo"]: row.to_dict() for _, row in df.iterrows()}
+        obras = {str(row["codigo"]): row.to_dict() for _, row in df.iterrows()}
 
     if os.path.exists(ARQ_ETAPAS):
         df = pd.read_csv(ARQ_ETAPAS)
-        etapas = [row.to_dict() for _, row in df.iterrows()]
+        etapas.clear()
+        for _, row in df.iterrows():
+            etapas.append(row.to_dict())
 
 
 # -------------------------
 # Utilidades
 # -------------------------
 def formatar_moeda(v):
-    return f"R$ {v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    try:
+        return f"R$ {v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
+    except Exception:
+        return "R$ 0,00"
 
 
 def dias_entre(data1, data2):
@@ -60,7 +69,7 @@ def dias_entre(data1, data2):
         d1 = datetime.strptime(data1, "%Y-%m-%d")
         d2 = datetime.strptime(data2, "%Y-%m-%d")
         return (d2 - d1).days
-    except:
+    except Exception:
         return 0
 
 
@@ -148,26 +157,26 @@ def registrar_custo(obra, etapa_nome, custo):
 def calc_progresso(obra):
     lista = [e for e in etapas if e["obra_codigo"] == obra]
     if not lista:
-        return 0
-    soma = sum(e["percentual_conclusao"] for e in lista)
+        return 0.0
+    soma = sum(e.get("percentual_conclusao", 0.0) for e in lista)
     return round(soma / len(lista), 2)
 
 
 def calc_custo(obra):
     lista = [e for e in etapas if e["obra_codigo"] == obra]
-    return sum(e["custo_realizado"] for e in lista)
+    return round(sum(e.get("custo_realizado", 0.0) for e in lista), 2)
 
 
 def calc_desvio(obra):
     if obra not in obras:
-        return 0
-    return calc_custo(obra) - obras[obra]["orcamento"]
+        return 0.0
+    return round(calc_custo(obra) - obras[obra].get("orcamento", 0.0), 2)
 
 
 def calc_atraso(obra):
     if obra not in obras:
         return 0
-    dp = obras[obra]["data_prevista"]
+    dp = obras[obra].get("data_prevista", "")
     hoje = datetime.now().strftime("%Y-%m-%d")
     return dias_entre(dp, hoje)
 
@@ -199,18 +208,18 @@ def relatorio_obra(obra):
     print("Etapas:")
     for e in etapas:
         if e["obra_codigo"] == obra:
-            print(" ", e["nome"], "-", e["percentual_conclusao"], "%", "-", e["status"])
+            print(" ", e["nome"], "-", e.get("percentual_conclusao", 0.0), "%", "-", e.get("status", ""))
     print()
 
 
 def relatorio_geral():
     print("\nRelatório Geral")
     print("Total de obras:", len(obras))
-    print("Concluídas:", sum(1 for o in obras.values() if o["status"] == "Concluída"))
-    print("Em execução:", sum(1 for o in obras.values() if o["status"] == "Em execução"))
-    print("Planejamento:", sum(1 for o in obras.values() if o["status"] == "Planejamento"))
+    print("Concluídas:", sum(1 for o in obras.values() if o.get("status") == "Concluída"))
+    print("Em execução:", sum(1 for o in obras.values() if o.get("status") == "Em execução"))
+    print("Planejamento:", sum(1 for o in obras.values() if o.get("status") == "Planejamento"))
 
-    print("Custo total orçado:", formatar_moeda(sum(o["orcamento"] for o in obras.values())))
+    print("Custo total orçado:", formatar_moeda(sum(o.get("orcamento", 0.0) for o in obras.values())))
     print("Custo total realizado:", formatar_moeda(sum(calc_custo(c) for c in obras)))
     print()
 
@@ -220,10 +229,10 @@ def gerar_dataframe():
     for cod, o in obras.items():
         dados.append({
             "codigo": cod,
-            "nome": o["nome"],
-            "tipo": o["tipo"],
-            "status": o["status"],
-            "orcamento": o["orcamento"],
+            "nome": o.get("nome"),
+            "tipo": o.get("tipo"),
+            "status": o.get("status"),
+            "orcamento": o.get("orcamento", 0.0),
             "custo_realizado": calc_custo(cod),
             "progresso": calc_progresso(cod),
             "atraso": calc_atraso(cod)
@@ -234,33 +243,66 @@ def gerar_dataframe():
 
 
 # -------------------------
-# Gráficos (simples)
+# Gráficos (salvam em relatorios/)
 # -------------------------
-def grafico_progresso():
+def grafico_progresso(show_plot=True):
     df = gerar_dataframe()
+    if df.empty:
+        print("Nenhuma obra para plotar.")
+        return
+    plt.figure(figsize=(8, 4))
     plt.bar(df["codigo"], df["progresso"])
     plt.title("Progresso das Obras")
     plt.xlabel("Obra")
     plt.ylabel("Progresso (%)")
-    plt.show()
+    plt.tight_layout()
+
+    caminho = os.path.join("relatorios", "progresso_obras.png")
+    plt.savefig(caminho)
+    if show_plot:
+        plt.show()
+    plt.close()
+    print(f"Gráfico salvo em: {caminho}")
 
 
-def grafico_custo():
+def grafico_custo(show_plot=True):
     df = gerar_dataframe()
+    if df.empty:
+        print("Nenhuma obra para plotar.")
+        return
+    plt.figure(figsize=(8, 4))
     plt.bar(df["codigo"], df["custo_realizado"])
     plt.title("Custo Realizado")
     plt.xlabel("Obra")
     plt.ylabel("Custo (R$)")
-    plt.show()
+    plt.tight_layout()
+
+    caminho = os.path.join("relatorios", "custo_obras.png")
+    plt.savefig(caminho)
+    if show_plot:
+        plt.show()
+    plt.close()
+    print(f"Gráfico salvo em: {caminho}")
 
 
-def grafico_atraso():
+def grafico_atraso(show_plot=True):
     df = gerar_dataframe()
+    if df.empty:
+        print("Nenhuma obra para plotar.")
+        return
+    plt.figure(figsize=(8, 4))
     plt.bar(df["codigo"], df["atraso"])
     plt.title("Atraso das Obras")
     plt.xlabel("Obra")
     plt.ylabel("Dias")
-    plt.show()
+    plt.tight_layout()
+
+    caminho = os.path.join("relatorios", "atraso_obras.png")
+    plt.savefig(caminho)
+    if show_plot:
+        plt.show()
+    plt.close()
+    print(f"Gráfico salvo em: {caminho}")
 
 
 # -------------------------
@@ -281,39 +323,39 @@ def main():
         print("8 gráficos")
         print("9 sair")
 
-        op = input("opção: ")
+        op = input("opção: ").strip()
 
         if op == "1":
-            codigo = input("codigo: ")
-            nome = input("nome: ")
-            local = input("local: ")
-            tipo = input("tipo: ")
-            di = input("data inicio YYYY-MM-DD: ")
-            dp = input("data prevista YYYY-MM-DD: ")
-            orc = float(input("orcamento: "))
-            resp = input("responsavel: ")
+            codigo = input("codigo: ").strip()
+            nome = input("nome: ").strip()
+            local = input("local: ").strip()
+            tipo = input("tipo: ").strip()
+            di = input("data inicio YYYY-MM-DD: ").strip()
+            dp = input("data prevista YYYY-MM-DD: ").strip()
+            orc = float(input("orcamento: ").strip() or 0)
+            resp = input("responsavel: ").strip()
             cadastrar_obra(codigo, nome, local, tipo, di, dp, orc, resp)
 
         elif op == "2":
-            obra = input("obra codigo: ")
-            nome = input("nome etapa: ")
-            orc = float(input("custo orcado: "))
+            obra = input("obra codigo: ").strip()
+            nome = input("nome etapa: ").strip()
+            orc = float(input("custo orcado: ").strip() or 0)
             cadastrar_etapa(obra, nome, orc)
 
         elif op == "3":
-            obra = input("obra codigo: ")
-            etapa = input("nome etapa: ")
-            p = float(input("percentual: "))
+            obra = input("obra codigo: ").strip()
+            etapa = input("nome etapa: ").strip()
+            p = float(input("percentual: ").strip() or 0)
             atualizar_progresso(obra, etapa, p)
 
         elif op == "4":
-            obra = input("obra codigo: ")
-            etapa = input("nome etapa: ")
-            custo = float(input("custo realizado: "))
+            obra = input("obra codigo: ").strip()
+            etapa = input("nome etapa: ").strip()
+            custo = float(input("custo realizado: ").strip() or 0)
             registrar_custo(obra, etapa, custo)
 
         elif op == "5":
-            obra = input("obra codigo: ")
+            obra = input("obra codigo: ").strip()
             relatorio_obra(obra)
 
         elif op == "6":
@@ -324,15 +366,22 @@ def main():
 
         elif op == "8":
             print("1 progresso   2 custo   3 atraso")
-            g = input("escolha: ")
-            if g == "1": grafico_progresso()
-            elif g == "2": grafico_custo()
-            elif g == "3": grafico_atraso()
+            g = input("escolha: ").strip()
+            if g == "1":
+                grafico_progresso()
+            elif g == "2":
+                grafico_custo()
+            elif g == "3":
+                grafico_atraso()
+            else:
+                print("Opção de gráfico inválida")
 
         elif op == "9":
             salvar_csv()
             print("Saindo.")
             break
+        else:
+            print("Opção inválida, tente novamente.")
 
 
 if __name__ == "__main__":

@@ -1,54 +1,70 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Sistema de Controle e Gerenciamento de Obras</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 40px;
-        }
-        code, pre {
-            background: #f4f4f4;
-            padding: 10px;
-            border-radius: 5px;
-            display: block;
-            white-space: pre-wrap;
-        }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 12px;
-        }
-        th, td {
-            padding: 8px;
-            border: 1px solid #666;
-        }
-        h1, h2, h3 {
-            color: #003366;
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Sistema de Controle e Gerenciamento de Obras</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        margin: 30px;
+        color: #222;
+    }
+    h1, h2, h3 {
+        color: #003366;
+    }
+    code {
+        background: #f4f4f4;
+        padding: 4px 6px;
+        border-radius: 4px;
+    }
+    pre {
+        background: #f4f4f4;
+        padding: 12px;
+        border-radius: 6px;
+        overflow-x: auto;
+    }
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 15px 0;
+    }
+    table th, table td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: left;
+    }
+    table th {
+        background: #e0e0e0;
+    }
+    .section {
+        margin-top: 35px;
+    }
+</style>
 </head>
+
 <body>
 
 <h1>Sistema de Controle e Gerenciamento de Obras</h1>
 
-<p>Aplicação em Python para cadastro, acompanhamento e análise de obras civis, desenvolvida para a disciplina <strong>Programação para Ciência de Dados</strong>.</p>
+<p>Aplicação em Python desenvolvida para cadastro, acompanhamento e análise de obras civis, como parte da disciplina <strong>Programação para Ciência de Dados</strong>.</p>
 
 <p><strong>Curso:</strong> MBA Ciência de Dados – UNIFOR<br>
 <strong>Instrutor:</strong> Cássio Pinheiro<br>
 <strong>Aluno:</strong> Thierry Pereira Canoco – Matrícula 2527390<br>
 <strong>Data de Entrega:</strong> 14/11/2025<br>
-<strong>Repositório GitHub:</strong> (preencher depois)</p>
+<strong>Repositório GitHub:</strong> 
+<a href="https://github.com/tcanoco/projeto_05_controle_obras_engenharia" target="_blank">
+https://github.com/tcanoco/projeto_05_controle_obras_engenharia
+</a></p>
 
 <hr>
 
+<div class="section">
 <h2>1. Objetivo do Projeto</h2>
+<p>O objetivo do projeto é desenvolver um <strong>Sistema de Controle de Obras</strong>, executado totalmente em console e integrando os conteúdos estudados ao longo da disciplina.</p>
 
-<p>O objetivo do projeto é desenvolver um Sistema de Controle de Obras, executado em console, integrando os conteúdos vistos ao longo da disciplina.</p>
-
-<h3>✔ Módulo 1 – Estruturas Python</h3>
+<h3>Módulo 1 – Estruturas Python</h3>
 <ul>
     <li>Listas</li>
     <li>Dicionários</li>
@@ -58,33 +74,39 @@
     <li>Menu interativo</li>
 </ul>
 
-<h3>✔ Módulo 2 – Análise de Dados</h3>
+<h3>Módulo 2 – Análise de Dados</h3>
 <ul>
     <li>Persistência em CSV</li>
     <li>DataFrames com Pandas</li>
 </ul>
 
-<h3>✔ Módulo 3 – Visualização</h3>
+<h3>Módulo 3 – Visualização</h3>
 <ul>
     <li>Gráficos gerenciais com Matplotlib</li>
 </ul>
 
-<h3>🎯 O sistema resolve:</h3>
+<h3>O sistema permite:</h3>
 <ul>
-    <li>Controle de progresso</li>
-    <li>Atraso de obras</li>
-    <li>Custos realizados</li>
-    <li>Desvio orçamentário</li>
-    <li>Análise visual</li>
+    <li>Controle de progresso físico</li>
+    <li>Controle de custos realizados</li>
+    <li>Cálculo de desvio orçamentário</li>
+    <li>Cálculo de atraso</li>
     <li>Relatórios completos</li>
+    <li>Visualizações gráficas</li>
 </ul>
+</div>
 
 <hr>
 
+<div class="section">
 <h2>2. Requirements</h2>
 
-<p>O arquivo <strong>requirements.txt</strong> contém as seguintes dependências:</p>
+<p>O arquivo <code>requirements.txt</code> contém todas as dependências necessárias.</p>
 
+<h3>Instalação das dependências</h3>
+<pre><code>pip install -r requirements.txt</code></pre>
+
+<h3>Conteúdo do arquivo</h3>
 <pre><code>asttokens==3.0.0
 comm==0.2.3
 contourpy==1.3.3
@@ -125,18 +147,16 @@ stack-data==0.6.3
 tornado==6.5.2
 traitlets==5.14.3
 tzdata==2025.2
-wcwidth==0.2.14
-</code></pre>
-
-<p><strong>Para instalar:</strong></p>
-<pre><code>pip install -r requirements.txt
-</code></pre>
+wcwidth==0.2.14</code></pre>
+</div>
 
 <hr>
 
+<div class="section">
 <h2>3. Diagrama de Contexto (C4 – Nível 1)</h2>
 
-<pre><code>C4Context
+<pre><code>```mermaid
+C4Context
     title Diagrama de Contexto do Sistema de Obras
 
     Person(gestor, "Gestor de Obras", "Usuário responsável por cadastrar, atualizar e analisar obras")
@@ -150,10 +170,13 @@ wcwidth==0.2.14
     Rel(gestor, sistema, "Entrada de dados, consultas e geração de relatórios")
     Rel(sistema, csv1, "Lê e escreve dados das obras", "Pandas")
     Rel(sistema, csv2, "Lê e escreve dados das etapas", "Pandas")
-</code></pre>
+```</code></pre>
+
+</div>
 
 <hr>
 
+<div class="section">
 <h2>4. Funcionalidades Implementadas</h2>
 
 <table>
@@ -162,20 +185,62 @@ wcwidth==0.2.14
         <th>Descrição</th>
         <th>Módulo</th>
     </tr>
-    <tr><td>Cadastro de Obras</td><td>Criação do registro principal</td><td>Módulo 1</td></tr>
-    <tr><td>Cadastro de Etapas</td><td>Insere etapas com custo orçado</td><td>Módulo 1</td></tr>
-    <tr><td>Atualização de Progresso</td><td>Ajusta porcentagem, status e conclusão</td><td>Módulo 1</td></tr>
-    <tr><td>Registro de Custos</td><td>Define custo realizado</td><td>Módulo 1</td></tr>
-    <tr><td>Cálculo de Métricas</td><td>Progresso, custo, desvio e atraso</td><td>Módulo 1</td></tr>
-    <tr><td>Persistência em CSV</td><td>Leitura e escrita usando Pandas</td><td>Módulo 2</td></tr>
-    <tr><td>DataFrame Resumo</td><td>Tabela gerencial da obra</td><td>Módulo 2</td></tr>
-    <tr><td>Relatório de Console</td><td>Relatórios individuais e gerais</td><td>Módulo 1</td></tr>
-    <tr><td>Gráficos</td><td>Progresso, custo e atraso</td><td>Módulo 3</td></tr>
-    <tr><td>Menu Completo</td><td>Sistema interativo no console</td><td>Módulo 1</td></tr>
+    <tr>
+        <td>Cadastro de Obras</td>
+        <td>Criação do registro principal</td>
+        <td>Módulo 1</td>
+    </tr>
+    <tr>
+        <td>Cadastro de Etapas</td>
+        <td>Insere etapas com custo orçado</td>
+        <td>Módulo 1</td>
+    </tr>
+    <tr>
+        <td>Atualização de Progresso</td>
+        <td>Ajusta porcentagem concluída e status</td>
+        <td>Módulo 1</td>
+    </tr>
+    <tr>
+        <td>Registro de Custos</td>
+        <td>Define custo realizado</td>
+        <td>Módulo 1</td>
+    </tr>
+    <tr>
+        <td>Cálculo de Métricas</td>
+        <td>Progresso, custo, desvio, atraso</td>
+        <td>Módulo 1</td>
+    </tr>
+    <tr>
+        <td>Persistência em CSV</td>
+        <td>Lê e salva dados usando Pandas</td>
+        <td>Módulo 2</td>
+    </tr>
+    <tr>
+        <td>DataFrame Resumo</td>
+        <td>Tabela gerencial das obras</td>
+        <td>Módulo 2</td>
+    </tr>
+    <tr>
+        <td>Relatórios em Console</td>
+        <td>Relatórios individuais e gerais</td>
+        <td>Módulo 1</td>
+    </tr>
+    <tr>
+        <td>Gráficos</td>
+        <td>Progresso, custo e atraso</td>
+        <td>Módulo 3</td>
+    </tr>
+    <tr>
+        <td>Menu Completo</td>
+        <td>Sistema interativo no terminal</td>
+        <td>Módulo 1</td>
+    </tr>
 </table>
+</div>
 
 <hr>
 
+<div class="section">
 <h2>5. Estrutura dos Dados</h2>
 
 <h3>Obras</h3>
@@ -191,8 +256,7 @@ wcwidth==0.2.14
         "responsavel": "Eng João Silva",
         "status": "Planejamento"
     }
-}
-</code></pre>
+}</code></pre>
 
 <h3>Etapas</h3>
 <pre><code>etapas = [
@@ -205,14 +269,15 @@ wcwidth==0.2.14
         "status": "Pendente",
         "data_conclusao": ""
     }
-]
-</code></pre>
+]</code></pre>
+</div>
 
 <hr>
 
+<div class="section">
 <h2>6. Fluxo do Sistema</h2>
 
-<ul>
+<ol>
     <li>Cadastrar obra</li>
     <li>Cadastrar etapas</li>
     <li>Atualizar progresso e custos</li>
@@ -220,10 +285,12 @@ wcwidth==0.2.14
     <li>Gerar DataFrame</li>
     <li>Gerar gráficos</li>
     <li>Dados salvos automaticamente</li>
-</ul>
+</ol>
+</div>
 
 <hr>
 
+<div class="section">
 <h2>7. Menu da Aplicação</h2>
 
 <pre><code>1 cadastrar obra
@@ -237,48 +304,49 @@ wcwidth==0.2.14
 9 sair
 </code></pre>
 
-<p><strong>Submenu de gráficos</strong></p>
+<h3>Submenu de gráficos</h3>
 
 <pre><code>1 progresso
 2 custo
-3 atraso
-</code></pre>
+3 atraso</code></pre>
+</div>
 
 <hr>
 
+<div class="section">
 <h2>8. Gráficos Gerados (Matplotlib)</h2>
 
 <ul>
-    <li>✔ Progresso das obras – comparação de percentual</li>
-    <li>✔ Custo realizado – gasto por obra</li>
-    <li>✔ Atraso – dias de atraso por obra</li>
+    <li><strong>Progresso das obras</strong> – comparação percentual</li>
+    <li><strong>Custo realizado</strong> – gastos por obra</li>
+    <li><strong>Atraso</strong> – comparação dos dias de atraso</li>
 </ul>
+</div>
 
 <hr>
 
+<div class="section">
 <h2>9. Persistência</h2>
 
 <p>Arquivos gerados automaticamente:</p>
 
 <pre><code>obras.csv
-etapas.csv
-</code></pre>
+etapas.csv</code></pre>
 
-<p>Compatíveis com Excel e Pandas.</p>
+<p>Podem ser usados no Excel ou Pandas.</p>
+</div>
 
 <hr>
 
+<div class="section">
 <h2>10. Como Executar</h2>
 
-<p><strong>Instalar dependências:</strong></p>
+<h3>Instalar dependências</h3>
+<pre><code>pip install -r requirements.txt</code></pre>
 
-<pre><code>pip install -r requirements.txt
-</code></pre>
-
-<p><strong>Executar o sistema:</strong></p>
-
-<pre><code>python sistema_obras.py
-</code></pre>
+<h3>Executar o sistema</h3>
+<pre><code>python sistema_obras.py</code></pre>
+</div>
 
 </body>
 </html>
