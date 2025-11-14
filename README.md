@@ -6,7 +6,7 @@ Aplicação em Python para cadastro, acompanhamento e análise de obras civis, d
 **Instrutor:** Cássio Pinheiro  
 **Aluno:** Thierry Pereira Canoco – Matrícula 2527390  
 **Data de Entrega:** 14/11/2025  
-**Repositório GitHub:** *(preencher depois)*
+**Repositório GitHub:** https://github.com/tcanoco/projeto_05_controle_obras_engenharia
 
 ---
 
