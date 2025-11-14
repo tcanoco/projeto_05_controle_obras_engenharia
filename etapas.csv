@@ -1,0 +1,4 @@
+obra_codigo,nome,custo_orcado,custo_realizado,percentual_conclusao,status,data_conclusao
+OBR001,Fundação,450000.0,500000.0,100.0,Concluída,2025-11-13
+OBR001,Estrutura,2000000.0,1200000.0,60.0,Em execução,
+OBR001,Acabamento,2550000.0,0.0,0.0,Pendente,
